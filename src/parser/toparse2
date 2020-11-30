@@ -1,0 +1,64 @@
+const int x=121212;
+assertion my_assertion: historically(x>4);
+assertion ass2: prev((true));
+assertion ass3: prev(always(x==3));
+assertion ass4: next(always(x==false));
+assertion ass5: next(always(true==false));
+assertion ass6: historically(next(always(true==false)));
+assertion ass7: prev(next(x==false));
+assertion ass8: p until (q==true);
+assertion ass9: (z<5)==true;
+
+assertion ass10: not x;
+assertion ass10: not TRUE;
+assertion ass10a: not(x);
+assertion ass10b: not(x>5);
+assertion ass10c: not(x<=5);
+assertion ass10d: not(x==5);
+assertion ass10e: not(x!==5);
+assertion ass10f: (x);
+assertion ass10g: (x>5);
+assertion ass10h: (x!==5);
+assertion ass10i: (x<=5);
+assertion ass10j: (x!==TRUE);
+assertion ass10k: (x!==(6<4));
+
+assertion ass11a: x<=z;
+assertion ass11b: x<5;
+assertion ass11c: 6>=x;
+assertion ass11d: 6>5;
+
+assertion ass12a: rise x;
+assertion ass12b: fall (x>5);
+assertion ass12c: fall (x>z);
+assertion ass12d: rise( fall (4>5));
+
+assertion ass13a: X == 5;
+assertion ass13b: 4 == x;
+assertion ass13c: Z == x;
+assertion ass13d: Z == M == FALSE;
+assertion ass13e: Z == (M == FALSE);
+
+assertion ass14a: historically(x<5);
+assertion ass14b: historically((x<5));
+assertion ass14c: historically((x<5) and (y<z));
+assertion ass14d: historically(TRUE);
+assertion ass14e: historically((x<5)==FALSE);
+
+assertion ass15a: prev(x>5);
+assertion ass15b: prev((x!==5));
+assertion ass15c: prev((x<5) xor (y<z));
+assertion ass15d: prev(TRUE);
+assertion ass15e: prev((x<5)==FALSE);
+
+assertion ass16a: next(x>5);
+assertion ass16b: next((x!==z!==5));
+assertion ass16c: next((y) xor (y<z));
+assertion ass16d: next(TRUE and FALSE);
+assertion ass16e: always(next(prev((x<5)==FALSE)));
+assertion ass16f: next((x>z<5));  //! resolve on semantical level
+
+assertion ass17a: p since (x>5);
+assertion ass17b: prev((p<5) and (x>6) and (p==x)) since (x>5);
+assertion ass17c: historically((TRUE) and (x>6) and (p==x)) since ((x>5) or ((FALSE)));
+assertion ass17d: (FALSE or TRUE) since (TRUE and FALSE);

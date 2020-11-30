@@ -1,0 +1,17 @@
+<algorithmConfig>
+	<distanceMetrics>
+		Qualitative
+	</distanceMetrics>
+	<satisfactionPolicy>
+		Qualitative
+	</satisfactionPolicy>
+	<aggregationFunction>
+		MAX
+	</aggregationFunction>
+	<selectionFunction>
+		MIN
+	</selectionFunction>
+	<varTotalRange>1
+	</varTotalRange>
+	
+</algorithmConfig>

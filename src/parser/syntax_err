@@ -1,0 +1,22 @@
+assertion ass2: prev(3);
+
+assertion assF1: 3;
+assertion assF1: true;
+assertion ass12b: rise( fall (TRUE>5));
+
+assertion ass14f: historically(true));
+assertion ass14g: historically(((true));
+assertion ass14h: historically(5);
+assertion ass14i: historically(5==false);
+
+assertion ass15f: previous(true));
+assertion ass15g: always(((true));
+assertion ass15h: true since (5);
+assertion ass15i: x==5 since (5==false);
+
+
+assertion ass15b: prev((x!=5));
+
+assertion ass17e: (5 or TRUE) since (44 and FALSE);
+assertion ass17f: (5 or 7) since (FALSE and FALSE);
+

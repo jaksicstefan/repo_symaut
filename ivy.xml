@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<ivy-module xmlns:e="http://ant.apache.org/ivy/extra" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="2.0" xsi:noNamespaceSchemaLocation="http://ant.apache.org/ivy/schemas/ivy.xsd">
+<info organisation="org.sosy_lab" module="simpleivy" revision="1.0.1-100-g5e2287a" status="release" publication="20170712142835">
+<license name="The Apache Software License, Version 2.0" url="http://www.apache.org/licenses/LICENSE-2.0.txt"/>
+<description homepage="https://github.com/sosy-lab/java-smt">
+Java wrapper for Z3, MathSAT5, SMTInterpol, Princess SMT solvers.
+</description>
+</info>
+<configurations>
+<!--
+ All dependencies that are only needed during build. 
+-->
+<!--  The minimal dependencies, without any solver.  -->
+<conf name="core" visibility="private" description="minimal configuration, no solver included"/>
+<!--
+ The normal dependencies with only one solver included. 
+-->
+<conf name="runtime-mathsat" extends="core" description="only one solver included"/>
+<conf name="runtime-optimathsat" extends="core" description="only one solver included"/>
+<conf name="runtime-smtinterpol" extends="core" description="only one solver included"/>
+<conf name="runtime-princess" extends="core" description="only one solver included"/>
+<conf name="runtime-z3" extends="core" description="only one solver included"/>
+<!--  The normal dependencies with all solvers included.  -->
+<conf name="runtime" extends="runtime-mathsat,runtime-optimathsat,runtime-smtinterpol,runtime-princess,runtime-z3" description="all solvers included"/>
+<!--  Dependencies needed for building or running tests.  -->
+<!--
+ Dependencies needed for running source-code auto-formatter. 
+-->
+<!--  Dependencies needed for running CheckStyle.  -->
+<!--  Dependencies needed for running FindBugs.  -->
+<!--
+ Additional files like JavaDocs or source code that will help developers.
+             These are not downloaded by default, but only when "ant install-contrib" is called. 
+-->
+<conf name="contrib" visibility="private"/>
+<!--  Configuration for publishing sources  -->
+<conf name="sources" description="sources of JavaSMT"/>
+<conf name="sources-all" extends="sources,contrib" description="sources of JavaSMT and its dependencies"/>
+</configurations>
+<publications defaultconf="core">
+<artifact/>
+<artifact conf="sources" e:classifier="sources" type="source" ext="jar"/>
+</publications>
+<dependencies>
+<!--  SoSy-Lab Common Library  -->
+<dependency org="org.sosy_lab" name="common" rev="0.3000-170-gfa70fe8" conf="core->runtime; contrib->sources"/>
+<dependency org="org.sosy_lab" name="javasmt" rev="1.0.1" />
+
+
+<!--
+ Google Core Libraries for Java
+             Contains a lot of helpful data structures. 
+-->
+<dependency org="com.google.guava" name="guava" rev="19.0" revConstraint="22.0" conf="core->default; contrib->sources"/>
+<!--
+  Guava-testlib contains many useful testing utilities 
+-->
+<dependency org="com.google.guava" name="guava-testlib" rev="22.0" conf=" contrib->sources"/>
+<!--
+ Dependency on Ivy itself so that we can ugprade it easily.
+             Change version number in build.xml for upgrading. 
+-->
+<!--  JUnit
+             Testing framework.  -->
+<!--  JaCoCo
+             Library for code coverage  -->
+<!--
+ The JUnit task for Ant so that we can run the tests.
+             The property used here is defined in build.xml according to the current Ant version. 
+-->
+<!--
+ Truth
+             Library for writing literal assertions. 
+-->
+<dependency org="com.google.truth" name="truth" rev="0.34" conf=" contrib->sources"/>
+<dependency org="com.google.truth.extensions" name="truth-java8-extension" rev="0.34" conf=" contrib->sources"/>
+<!--
+ Google error-prone
+             Compiler adaptor with some useful checks for common errors. 
+-->
+<dependency org="com.google.errorprone" name="error_prone_annotations" rev="2.0.21" conf=" contrib->sources"/>
+<!--
+ Eclipse JDT Compiler
+             For additional compiler warnings. 
+-->
+<!--
+ google-java-format
+             A source-code formatter for Java 
+-->
+<!--  Checkstyle  -->
+<!--  FindBugs  -->
+<!--  SmtInterpol  -->
+<dependency org="de.uni-freiburg.informatik.ultimate" name="smtinterpol" rev="2.1-335-g4c543a5" conf="runtime-smtinterpol->master; contrib->sources"/>
+<!--  Princess  -->
+<!--
+<dependency org="org.ruemmer.philipp" name="princess" rev="2017-07-10-r2920" conf="runtime-princess->runtime; contrib->sources">
+
+<artifact name="princess" e:classifier="assertionless" conf="runtime-princess"/>
+<artifact name="princess" e:classifier="sources-assertionless" conf="contrib" ext="zip"/>
+</dependency>
+-->
+
+<!--  Solver Binaries  -->
+<dependency org="org.sosy_lab" name="javasmt-solver-mathsat" rev="5.4.1" conf="runtime-mathsat->solver-mathsat"/>
+
+<dependency org="org.sosy_lab" name="javasmt-solver-z3" rev="z3-4.5.0-273-g899843b" conf="runtime-z3->solver-z3">
+
+  
+<artifact name="libz3"  		  conf="runtime-z3" type="shared-object" ext="so"  url="https://www.sosy-lab.org/ivy/org.sosy_lab/javasmt-solver-z3/libz3-z3-4.5.0-273-g899843b.so"/>
+<artifact name="libz3java"  	  conf="runtime-z3" type="shared-object" ext="so"  url="https://www.sosy-lab.org/ivy/org.sosy_lab/javasmt-solver-z3/libz3java-z3-4.5.0-273-g899843b.so"/>
+<artifact name="com.microsoft.z3" conf="runtime-z3" ext="jar" 					   url="https://www.sosy-lab.org/ivy/org.sosy_lab/javasmt-solver-z3/com.microsoft.z3-z3-4.5.0-273-g899843b.jar"/>
+
+</dependency>
+
+
+
+<dependency org="org.sosy_lab" name="javasmt-solver-optimathsat" rev="1.4.0.10" conf="runtime-optimathsat->solver-optimathsat"/>
+<!--
+ Google Auto-Value
+             Library for auto-generating value types. 
+-->
+<!--
+ Guava has a dependency on error_prone_annotations without a revision number, need an override. 
+-->
+<override org="com.google.errorprone" module="error_prone_annotations" rev="2.0.21"/>
+</dependencies>
+</ivy-module>

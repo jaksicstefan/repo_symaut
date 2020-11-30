@@ -1,0 +1,3 @@
+assertion myAssertionNO_RW4:
+always( (acc > 5) implies (always[0:1] (acc>0)) )
+; 

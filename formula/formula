@@ -1,0 +1,121 @@
+/*
+assertion myAssertion1:
+	p since[2:4] Q;
+
+assertion myAssertion2:
+	X since[0:4] Z; 
+	
+assertion myAssertionNO_RW1:
+	historically[0:4] (p and q);
+	 
+assertion myAssertion3:
+	historically[2:4] M; 
+	
+assertion myAssertionNO_RW2:
+	once[0:4] C; 
+	
+assertion myAssertion4:
+	once[3:5] D; 
+	
+assertion myAssertionNO_RW3:
+	always[0:2] E; 
+	
+assertion myAssertion5:
+	always[2:4] F; 
+	
+	
+	
+	
+	
+assertion myAssertionNO_RW4:
+	eventually[0:2] G; 
+	
+assertion myAssertion6:
+	eventually[2:4] H and (Q); 
+
+	
+assertion myAssertionNO_RW4:
+	P until[0:2] Q; 
+	
+assertion myAssertion6:
+	P until[3:9] Q; 
+	
+
+assertion myAssertionNO_RW4:
+	always[0:2] Q; 
+	
+assertion myAssertion6:
+	always[3:9] (R or S); 
+	*/
+	
+assertion myAssertion1 : 
+	( ( always [ 0 : 5 ] ( p ) ) and oracle 5 ( ((( p )) until (( q ))) and (eventually[0:5](( q ))) ) ) ; 
+
+
+/*
+
+done for CAV 2018 paper evaluation section	
+
+assertion myAssertion1:   
+  	 always ( ((a >= 0) and (a<30)) or ((a >= 30) and (a<60)) )
+;
+	
+assertion myAssertion1:   
+  	 always ((a >= 0) and (a<=60)
+;
+
+assertion myAssertion1:   
+  	 eventually (a >= 20)
+;
+assertion myAssertion1:   
+  	 eventually (( (a>=20) and (a<=90) ) or (a >= 85))
+;
+
+assertion myAssertion1:   
+  	 always ( (a>=35) and (a<35) )
+;
+
+assertion psi6:   
+  not(
+  
+  (eventually ((a >= 0) and (a<=60))) or (eventually ((a<0) or (a>60))) 
+  
+  )
+;
+	
+	
+	assertion example:   
+  (
+  
+  eventually ( 
+  			 (x <= 5) and always[0:1](x<=3 and y>=6)
+  			 ) 
+  
+  )
+;
+
+
+assertion example:   
+  always(  
+  (p == 3) since (q == 5)			   
+  )
+;
+
+
+assertion myAssertionNO_RW4:
+	always ( (a > 5) implies (always[0:3] a>0 ) ) ; 
+
+assertion myAssertionNO_RW4:
+	always ( ( p < 100) and ( q < 200)); 
+
+
+
+*/
+
+assertion myAssertion1:   
+  
+  (eventually (a >= 0)) or (eventually (a<0)) 
+ 
+;
+
+	

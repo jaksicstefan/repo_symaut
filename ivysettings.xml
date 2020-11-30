@@ -1,0 +1,10 @@
+<ivysettings>
+	<property name="ivy.repo.url" value="http://www.sosy-lab.org/ivy"/>
+	<settings defaultResolver="Sosy-Lab"/>
+	<resolvers>
+		<url name="Sosy-Lab" descriptor="required">
+			<ivy pattern="${ivy.repo.url}/[organisation]/[module]/ivy-[revision].xml"/>
+			<artifact pattern="${ivy.repo.url}/[organisation]/[module]/[artifact]-[revision](-[classifier]).[ext]"/>
+		</url>
+	</resolvers>
+</ivysettings>

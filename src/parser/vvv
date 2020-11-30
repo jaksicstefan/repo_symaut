@@ -1,0 +1,2 @@
+const x=6;
+assertion my_assertion: historically(x>4);

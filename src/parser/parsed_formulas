@@ -1,0 +1,146 @@
+assertion my_assertion: historically(x>4);
+
+
+const x=6;
+assertion my_assertion: historically(x>4);
+
+const x=6;
+input y=8;
+output z=10;
+input yy;
+output zz0;
+const real sx=6;
+input bool asy=8;
+output bool sz=10;
+input bool syy;
+output real zzz0;
+assertion my_assertion: historically(x>4);
+
+const mm; //this must not parse!
+assertion my_assertion: historically(x>4);
+
+
+--------------------------------------------------
+
+assertion myAssertion1:
+	p since (q until r);
+	
+assertion myAssertion1:
+	p since (q);
+	
+--------------------------------------------------
+assertion myAssertion1:
+	not(P);
+--------------------------------------------------	
+assertion myAssertion1:
+	(p) and (q);
+assertion myAssertion1:
+	p xor q;
+assertion myAssertion1:
+	p iff q;
+--------------------------------------------------	
+assertion myAssertion1:
+	once (m and (q until m));	
+assertion myAssertion1:
+	once (q);
+	
+--------------------------------------------------	
+assertion myAssertion1:
+	always (X iff (eventually(p) until q ));
+	
+assertion myAssertion1:
+	always (X);
+	
+assertion myAssertion1:
+	previous (previous (X));
+	
+assertion myAssertion1:
+	previous (previous (X));
+	
+assertion myAssertion1:
+	always (X iff (next(p) until q ));
+	
+assertion myAssertion1:
+	3 < x;
+	
+assertion myAssertion1:
+	Z < x;
+	
+assertion myAssertion1:
+	always (X iff (next((p) until q )));	
+
+assertion myAssertion1:
+	(m implies (always (X iff (next((p) until q )))));
+	
+assertion myAssertion1:
+	(p since r) iff (p implies (m or q));
+	
+assertion myAssertion1:
+	((p since r) iff (p implies (m or q)) ) and (historically N) and (prev(N));
+	
+assertion myAssertion1:
+	(p since r) and (historically N) and (m since (N));
+	
+assertion myAssertion1:
+	next (X iff (next((p) until q )));
+	
+assertion myAssertion1:
+	next (X iff (next((s) until q )));	
+	
+assertion myAssertion1:
+	next (X iff (next((s or (t until (z since f))) until q )));	
+	
+assertion myAssertion1:
+	next (X iff (next((s or (t until (z since f))) until q )));	
+	
+--------------------------------------------------------------
+--------------------------------------------------------------
+testing preprocessing	
+	
+
+assertion myAssertion1:
+	p until[0:4] q;	
+	
+assertion myAssertion1:
+	p until[2:6] q;
+	
+assertion myAssertion1:
+	p since[0:6] q;
+	
+assertion myAssertion1:
+	p since[2:8] q;
+	
+assertion myAssertion1:
+	historically[0:8] q;
+		
+assertion myAssertion1:
+	historically[2:8] q;
+	
+assertion myAssertion1:
+	once[0:4] q;	
+	
+assertion myAssertion1:
+	once[4:8] q;
+	
+assertion myAssertion1:
+	always[0:5] q;	
+	
+assertion myAssertion1:
+	always[2:7] q;	
+
+assertion myAssertion1:
+	eventually[0:5] q;
+	
+assertion myAssertion1:
+	eventually[2:5] q;
+	
+	//size test
+	
+assertion myAssertion1:  //TO
+	p until[9:10] q;
+	
+assertion myAssertion1:	 //TO
+	p until[5:10] q;
+
+assertion myAssertion1:      //from the paper
+	always ( (x==4) implies(once(x<3)));	

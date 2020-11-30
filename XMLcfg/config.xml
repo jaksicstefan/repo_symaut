@@ -1,0 +1,17 @@
+<algorithmConfig>
+	<distanceMetrics>
+		Max
+	</distanceMetrics>
+	<satisfactionPolicy>
+		Quantitative
+	</satisfactionPolicy>
+	<aggregationFunction>
+		MAX
+	</aggregationFunction>
+	<selectionFunction>
+		MIN
+	</selectionFunction>
+	<varTotalRange>5000
+	</varTotalRange>
+	
+</algorithmConfig>

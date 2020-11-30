@@ -1,0 +1,118 @@
+31/5/2017: As the output from monitor generation, we want to obtain a set of recurrence equations for each automata state.
+from such an object, we can then easily implement different back-end for Verilog or VHDL code generation.
+31/5/2017: Apart from the monitor generation, we want to keep the simulation capabilities. 
+31/5/2017: We need to support multivariable formulas.
+31/5/2017: We shall implement dynamic algorithm with DynamicIterator class. This class will contain an array of integers - 
+current cost of getting into any of the states. With every new input, all the state values get updated. 
+31/5/2017: We need to find a proper way to treat UNSAT constraints such as x>7 AND x<5. {TODO}
+  Update: Before we calculate distance from set (specified by constraints) we really need to make sure that these constraints are SAT.
+          If we simply apply our distance algorithm on the UNSAT set of constraints we would get wrong distance value (not equal INFTY)!
+31/5/2017: {constraint introduced} Formulas can only have single-letter variables. There can be up to 26 such variables. //should we say 26?
+           Hamming policy - node exchange arrays of distance-from-set values in bottom up fashion
+           
+01/06/2017: In HammingIterator.java class, +infinity is represented by Short.MAX_VALUE.
+            For this reason, substitution cost should be less than 32767.
+            
+02/06/2017: We need to define normalization. How to define/simulate/generate the code.
+02/06/2017: Robustness by Fainekos/Pappas : take the supremum of d(s',s)
+19/06/2017: Core of the dynamic implemented. The next step is to implement the front end.
+20/06/2017: Grammars created.
+22/06/2017: Adding STL parser with ANTLR DT eclipse plugin. It is required to use ANTLR 4.7 as well as Eclipse Neon.
+23/06/2017: Grammar is going through significant changes. I noticed it was not specific enough and it allowed some
+syntax constructs that didn't make much sense. The new grammar will be more verbose and also more precise.
+28/06/2017: We shall implement automata generation using a visitor.
+03/07/2017: We shall use SMT solver to be able to obtain minimal automata. 
+Also , we shall represent temporal tester as an automata with output variables.
+We need to model output variables with every transition.
+We will create separate visitor which will enable us to parse the constraints and obtain Constraint object.
+@Willi: (1) TODO - need to do Unit testing? (2) can we patent any of the code?  
+04/07/2017: what to do in case that we have syntax errors in constraint and the parser fails?
+I've implemented Constraint in text form -> Temporal tester for Since automaton.
+11/07/2017: finished porting and refactoring the legacy code. implemented automata product, first version
+12/07/2017: Decided to use JavaSMT - Unified Java API for SMT solvers. https://github.com/sosy-lab/java-smt.
+For this purpose I had to download Java IvyDE plugin for Eclipse. I've created two files ivy.xml and ivysettings.xml.
+In order to add SoSy lab repository, the latter file has to be set as Ivy settings file in  Window>Preferences>Ivy>Settings
+13/07/2017: Decided to use only BooleanFormula objects in ConstraintNodeConvertVisitor.java.
+18/07/2017: Resolved a problem which occured while invoking prover.isUnsat. The problem was that the
+variables were not stored in an internal HashMap and this caused the NullPointerException.
+There are three required steps when we try to use String-> Constraint -> BooleanFormula -> prover.isUnsat():
+1. We invoke static method Constraint.getCstFromStr("m and n or not(n)")
+2. We set the correct SolverContext object!!!
+3. Only then we can invoke constraint.toJavaSMTConstraint();
+
+/** code chunk */
+cst2test = Constraint.getCstFromStr("m and n or not(n)");
+cst2test.setConvertVisitor(new ConstraintNodeConvertVisitor(context));
+
+BooleanFormula bf = cst2test.toJavaSMTConstraint();
+
+prover2.addConstraint(bf);
+prover2.isUnsat()
+/*-------------*/
+
+18/07/2017: next step is to test how automata product works
+18/07/2017: next step is to introduce other SMT solvers
+19/07/2017: From now on we shall use javaSMT 1.0.1 version of the library
+19/07/2017: It was really complicate to deploy the Z3 binary. I've set the location of JAR file in java build path settings of the project. I've also 
+set the native library path for that .jar file
+
+  if (NativeLibraries.OS.guessOperatingSystem() == NativeLibraries.OS.WINDOWS) {
+      // Z3 itself
+      System.loadLibrary("libz3");
+      System.loadLibrary("libz3java");
+    }
+
+    System.loadLibrary("z3");
+    System.loadLibrary("z3java");
+    
+19/07/2017: generated Javadoc - still many warnings to solve there
+20/07/2017: Implemented the automata product correctly(AutomataService.syncAndCompose(tt1,tt2)). 
+debug done. new test added  - TestAutomataService. AutomataService class is considered reliable.
+The resulting automata in the test are the same as with the previous quantitative monitoring generator.
+I've also implemented temporal testers for a single variable, AND and OR operators.
+Constraint object can be cloned now.
+
+--CAV summer break--
+
+01/08/2017: have to investigate other existing libraries in order to implement determinisation/ minimization efficiently.
+02/08/2017: have to improve the existing basic testers. Every operator that can be implemented directly , should have appropriate temporal tester.
+This will save some product/minimization operations. Also we need to use better rewriting rules than before. 
+Implementing preprocessing listener for rewriting.
+03/08/2017: Implemented rewriting rules, implemented bounded until TT
+implementing always(true) automata which will be used to translate TT to acceptor.
+Always true is implemented as a single state, single loop transition. Before we did implement it differently. WHY?
+04/08/2017: implemented a correct way of converting to automaton. Due to semantics, we say that a word is accepted if a trace satisfies the formula
+at T=0. Therefore we make a composition with a two-state transducer where a first state only has U transition, and the second one has true 
+(accept any transition, which is preceded by true transition).
+implementing AutomataGen Listener.
+small changes to parser. 
+Constraint knows how to negate
+
+This part is removed from the grammar, it simply makes no sense. Nobody would do such a thing.
+
+	| IntegerLiteral ( comparisonOp | equalityCmpOp) IntegerLiteral	    #IntCompInt ;
+	
+07/08/2017: Implemented AutomataCompositionBuilder which builds top level automata by traversing the AST top down.
+Constraint conversion to NNF form is fixed. Automata SyncAndCompose is fixed.
+07/08/2017: Implemented constraint minimization for 2 important cases
+(1) q and q    ->    q
+(2) q and q and r   ->   q and r
+
+10/08/2017: implemented the example from the quantitative semantics (RV) paper.
+11/08/2017: fixed the qualitative case:
+
+		DistanceMetrics  dist = new QualitativeDistance();
+		SatisfactionPolicy pol = new QualitativePolicy();
+		AggregationFunction aggr = new AggregationFunction(AggregateType.MAX);
+		SelectionFunction min = new SelectionFunction(SelectionType.MIN);
+		DynamicAlgorithm iter = new DynamicAlgorithm(myAutomaton, dist, pol, aggr, min);
+		
+		if two points in space are the same in all dimensions = distance is 0
+		then we aggregate using MAX and select using MIN
+
+10/09/2017: fixed the next operator. implemented XML configuration. Implemented minimal automata for nested NEXT operations. Improved the test structure.
+11/09/2017: implemented equals method for many classes. implemented automata serialization/deserialization. improved BaseTest.
+4/10/2017: need to support real numbers in formulas, it. x < 0.2
+4/10/2017: need to support traces with negative values ( Variable.minVal)
+4/10/2017: need to support negative numbers in predicates ( x< -1)    
+5/10/2017: fixed a bug with bounded always operator. Fixed a bug in breadth first traversal of the automata (for printing purposes).            

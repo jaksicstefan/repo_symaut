@@ -1,0 +1,16 @@
+SET CLASSPATH=.;C:\Javalib_new\antlr-4.7-complete.jar;%CLASSPATH%
+
+
+doskey antlr4=java org.antlr.v4.Tool $*
+doskey grun =java org.antlr.v4.gui.TestRig $*
+
+
+$ antlr4 StlLexer.g4
+$ antlr4 StlParser.g4
+$ javac Stl*.java
+
+$ grun Stl stlfile -gui
+
+$ C:\repo_symaut\sym_automata\bin>set CLASSPATH=.;C:\repo_symaut\sym_automata\antlr-4.7-complete.jar
+$ C:\repo_symaut\sym_automata\bin>grun parser.Stl stlfile -gui
+$ C:\repo_symaut\sym_automata\bin>grun gen.Stl stlfile -gui parser/toparse2

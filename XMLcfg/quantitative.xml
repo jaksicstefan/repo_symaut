@@ -1,0 +1,18 @@
+<algorithmConfig>
+	<distanceMetrics>
+		Manhattan
+	</distanceMetrics>
+	<satisfactionPolicy>
+		Quantitative
+	</satisfactionPolicy>
+	<aggregationFunction>
+		SUM
+	</aggregationFunction>
+	<selectionFunction>
+		MIN
+	</selectionFunction>
+	<varTotalRange>
+	5000
+	</varTotalRange>
+	
+</algorithmConfig>
