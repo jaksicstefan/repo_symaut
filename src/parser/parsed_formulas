@@ -144,3 +144,18 @@ assertion myAssertion1:	 //TO
 
 assertion myAssertion1:      //from the paper
 	always ( (x==4) implies(once(x<3)));	
+	
+assertion myAssertionNO_RW4:
+always[0:12] ( (eventually[0:2] regA ) and (eventually[0:2] regB ) )
+; 
+
+assertion myAssertionNO_RW4:
+prev ( prev ( ( historically [ 0 : 12 ] (  ( once [ 0 : 2 ] regA ) and ( once [ 0 : 2 ] regB )  ) ) ) )
+; 
+
+assertion myAssertionNO_RW4:
+prev(FFF)
+; 
+
+
+	

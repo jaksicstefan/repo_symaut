@@ -147,13 +147,14 @@ public class AutomataService {
 		if (a != 0)
 			System.err.println("getBoundedOnceTester: a is not 0!");
 
-		int stateArrLen = b + 2;
+		//int stateArrLen = b + 2; //@STEF - buggy line of code - one state too few
+		int stateArrLen = b + 3;
 
 		AutomatonState stateArr[] = new AutomatonState[stateArrLen];
 
 		for (int i = 0; i < stateArrLen; i++) {
 			if (i == 0)
-				stateArr[i] = new AutomatonState(true, false); // init non-acc
+				stateArr[i] = new AutomatonState(true, false); // init non-acc //TODO- check if it is ACC
 			else
 				stateArr[i] = new AutomatonState(false, true); // acc
 			tt.addState(stateArr[i]);
@@ -173,32 +174,34 @@ public class AutomataService {
 		// cstList.get(0) = p
 		// cstList.get(1) = not p
 
-		TTesterTransition transArr[] = new TTesterTransition[2 * stateArrLen];
+		TTesterTransition transArr[] = new TTesterTransition[2 * stateArrLen +1];
 
-		for (int j = 0; j < stateArr.length - 1; j++) {
+		for (int j = 0; j < stateArr.length-1; j++) {
+			
+			transArr[2 * j] = new TTesterTransition(stateArr[j], stateArr[1], assgn1, cstList.get(0), outVars); // pU
 
-			transArr[2 * j] = new TTesterTransition(stateArr[j], stateArr[b + 1], assgn1, cstList.get(0), outVars); // pU
-
-			if (j == stateArr.length - 2) {
+			if 		(j == 3) 
 				transArr[(2 * j) + 1] = new TTesterTransition(stateArr[j], stateArr[j], assgn1, cstList.get(1), outVarsNeg); // !p!U
-			} else {
-				if (j == 0)
-					transArr[(2 * j) + 1] = new TTesterTransition(stateArr[j], stateArr[b], assgn1, cstList.get(1), outVarsNeg); // !p!U
-				else
-					transArr[(2 * j) + 1] = new TTesterTransition(stateArr[j], stateArr[j + 1], assgn1, cstList.get(1), outVars); // !pU
-			}
+			else if (j == 0)
+				transArr[(2 * j) + 1] = new TTesterTransition(stateArr[j], stateArr[3], assgn1, cstList.get(1), outVarsNeg); // !p!U
+			else if (j == 2)
+				transArr[(2 * j) + 1] = new TTesterTransition(stateArr[j], stateArr[j + 2], assgn1, cstList.get(1), outVars); // !pU
+			else
+				transArr[(2 * j) + 1] = new TTesterTransition(stateArr[j], stateArr[j + 1], assgn1, cstList.get(1), outVars); // !pU
+			
 
 			tt.addTransition(transArr[2 * j]);
 			tt.addTransition(transArr[2 * j + 1]);
 		}
 
-		int k = b + 1;
-		transArr[2 * k] = new TTesterTransition(stateArr[k], stateArr[1], assgn1, cstList.get(1), outVars); // !pU
-		transArr[2 * k + 1] = new TTesterTransition(stateArr[k], stateArr[k], assgn1, cstList.get(0), outVars); // !p!U
+		
+		int k = stateArr.length-1;
+		transArr[2 * k] = new TTesterTransition(stateArr[k], stateArr[1], assgn1, cstList.get(0), outVars); // pU
+		transArr[2 * k + 1] = new TTesterTransition(stateArr[k], stateArr[3], assgn1, cstList.get(1), outVarsNeg); // !p!U
 
 		tt.addTransition(transArr[2 * k]);
 		tt.addTransition(transArr[2 * k + 1]);
-
+		
 		return tt;
 	}
 
@@ -215,8 +218,8 @@ public class AutomataService {
 			Variable outVar) {
 		resetIDs();
 
-		TTester tt = new TTester(false);// no error state here. TODO-review the
-																		// decision
+		TTester tt = new TTester(false);
+
 		tt.addVar(inVar0);
 		tt.addOutVar(outVar);
 
@@ -224,63 +227,63 @@ public class AutomataService {
 		int b = Integer.parseInt(ctx.interval().getChild(3).getText());
 
 		if (a != 0)
-			System.err.println("getHistoricallyTester:error: a is not 0!");
+			System.err.println("getBoundedHistoricallyTester: a is not 0!");
 
-		int stateArrLen = b + 2;
+		int stateArrLen = b + 3;
 
 		AutomatonState stateArr[] = new AutomatonState[stateArrLen];
 
 		for (int i = 0; i < stateArrLen; i++) {
 			if (i == 0)
-				stateArr[i] = new AutomatonState(true, false); // init non-acc
+				stateArr[i] = new AutomatonState(true, false); // init non-acc //TODO- check if it is ACC
 			else
 				stateArr[i] = new AutomatonState(false, true); // acc
-
 			tt.addState(stateArr[i]);
 		}
 
 		TransitionAssignment assgn1 = new TransitionAssignment();
 		ArrayList<String> strList = new ArrayList<String>(2);
-		strList.add(0, "" + inVar0.getName() + "");
-		strList.add(1, "not(" + inVar0.getName() + ")");
+		strList.add(0, "not(" + inVar0.getName() + ")");
+		strList.add(1, "" + inVar0.getName() + "");  //INVERTED
+
 
 		ArrayList<Constraint> cstList = prepareCstList(strList);
 
-		// create out vars
 		ArrayList<VariableInstance> outVars = new ArrayList<VariableInstance>();
-		outVars.add(new VariableInstance(outVar, true));
+		outVars.add(new VariableInstance(outVar, false));  //inverted
 		ArrayList<VariableInstance> outVarsNeg = new ArrayList<VariableInstance>();
-		outVarsNeg.add(new VariableInstance(outVar, false));
+		outVarsNeg.add(new VariableInstance(outVar, true));
 		// cstList.get(0) = p
 		// cstList.get(1) = not p
 
-		TTesterTransition transArr[] = new TTesterTransition[2 * stateArrLen];
+		TTesterTransition transArr[] = new TTesterTransition[2 * stateArrLen +1];
 
-		for (int j = 0; j < stateArr.length - 1; j++) {
+		for (int j = 0; j < stateArr.length-1; j++) {
+			
+			transArr[2 * j] = new TTesterTransition(stateArr[j], stateArr[1], assgn1, cstList.get(0), outVars); // pU
 
-			transArr[2 * j] = new TTesterTransition(stateArr[j], stateArr[b + 1], assgn1, cstList.get(1), outVarsNeg); // !p!U
-
-			if (j == stateArr.length - 2) {
-				transArr[(2 * j) + 1] = new TTesterTransition(stateArr[j], stateArr[j], assgn1, cstList.get(0), outVars); // pU
-			} else {
-				if (j == 0)
-					transArr[(2 * j) + 1] = new TTesterTransition(stateArr[j], stateArr[b], assgn1, cstList.get(0), outVars); // pU
-				else
-					transArr[(2 * j) + 1] = new TTesterTransition(stateArr[j], stateArr[j + 1], assgn1, cstList.get(0),
-							outVarsNeg); // p!U
-			}
+			if 		(j == 3) 
+				transArr[(2 * j) + 1] = new TTesterTransition(stateArr[j], stateArr[j], assgn1, cstList.get(1), outVarsNeg); // !p!U
+			else if (j == 0)
+				transArr[(2 * j) + 1] = new TTesterTransition(stateArr[j], stateArr[3], assgn1, cstList.get(1), outVarsNeg); // !p!U
+			else if (j == 2)
+				transArr[(2 * j) + 1] = new TTesterTransition(stateArr[j], stateArr[j + 2], assgn1, cstList.get(1), outVars); // !pU
+			else
+				transArr[(2 * j) + 1] = new TTesterTransition(stateArr[j], stateArr[j + 1], assgn1, cstList.get(1), outVars); // !pU
+			
 
 			tt.addTransition(transArr[2 * j]);
 			tt.addTransition(transArr[2 * j + 1]);
 		}
 
-		int k = b + 1;
-		transArr[2 * k] = new TTesterTransition(stateArr[k], stateArr[1], assgn1, cstList.get(0), outVarsNeg); // p!U
-		transArr[2 * k + 1] = new TTesterTransition(stateArr[k], stateArr[k], assgn1, cstList.get(1), outVarsNeg); // !p!U
+		
+		int k = stateArr.length-1;
+		transArr[2 * k] = new TTesterTransition(stateArr[k], stateArr[1], assgn1, cstList.get(0), outVars); // pU
+		transArr[2 * k + 1] = new TTesterTransition(stateArr[k], stateArr[3], assgn1, cstList.get(1), outVarsNeg); // !p!U
 
 		tt.addTransition(transArr[2 * k]);
 		tt.addTransition(transArr[2 * k + 1]);
-
+		
 		return tt;
 	}
 
@@ -291,7 +294,7 @@ public class AutomataService {
 	 * these are eliminated in pre-processing stage.
 	 */
 	@SuppressWarnings("unused")
-	public static TTester getBoundedEventuallyTester(ExprEventuallyContext ctx, Variable inVar0, Variable outVar) {
+	public static TTester getBoundedEventuallyTester(ExprEventuallyContext ctx, Variable inVar0, Variable outVar) { 
 		TTester retTester = null;
 		resetIDs();
 
@@ -357,10 +360,14 @@ public class AutomataService {
 
 			tttArr.add(4, new TTesterTransition(stateArr[1], stateArr[2], assgn1, cstList.get(1), outVarsNeg)); // !p!U
 			tttArr.add(5, new TTesterTransition(stateArr[1], stateArr[1], assgn1, cstList.get(0), outVars)); // pU
+			
+			
 			tttArr.add(6, new TTesterTransition(stateArr[1], stateArr[3], assgn1, cstList.get(1), outVars)); // !pU
+
 
 			// create transitions
 			for (int i = 7; i < 7 + 2 * (b - a) - 1; i++) { // 7,8,9,10
+
 				if (i % 2 == 1) {
 					tttArr.add(i, new TTesterTransition(sx, sx, assgn1, cstList.get(0), outVars)); // pU
 				} else {
@@ -369,7 +376,7 @@ public class AutomataService {
 			}
 
 			for (int i = 7 + 2 * (b - a) - 1; i < totalTransNum; i++) { // 11,12,13
-				if (i == tttArr.size() - 1) { // the last one in array
+				if (i == totalTransNum - 1) { // the last one in array
 					tttArr.add(i, new TTesterTransition(sx, sx, assgn1, cstList.get(0), outVars)); // p/u
 				} else {
 					tttArr.add(i, new TTesterTransition(sx, sx, assgn1, cstList.get(1), outVars)); // !p/u
@@ -407,8 +414,11 @@ public class AutomataService {
 
 				if (i == (stateArr.length - 1)) { // additional transition
 					// auto.addTransition(new Transition(stArr[i],
-					// altArr[lastTransitionNum], stArr[1]));
-					tttArr.get(lastTransitionNum).setSrcState(stateArr[i]); //i think we have a bug here for eventually[0,2] p, this transitions is neg p / u and should be p/u  
+					// altArr[lastTransitionNum], stArr[1]))
+					System.out.println("STEF DBG: TTTARR" + tttArr + "last num " + lastTransitionNum);
+
+					System.out.println("STEF DBG: transition to repatch" + tttArr.get(lastTransitionNum));
+					tttArr.get(lastTransitionNum).setSrcState(stateArr[i]);  
 					tttArr.get(lastTransitionNum).setDstState(stateArr[1]);
 				}
 			}
@@ -988,12 +998,10 @@ public class AutomataService {
 		tt.addOutVar(outVar);
 
 		AutomatonState s0 = new AutomatonState(true, true); // init acc
-		AutomatonState s1 = new AutomatonState(false, false); // acc
-		AutomatonState s2 = new AutomatonState(false, true); // acc
+		AutomatonState s1 = new AutomatonState(false, true); // acc
 
 		tt.addState(s0);
 		tt.addState(s1);
-		tt.addState(s2);
 
 		TransitionAssignment assgn1 = new TransitionAssignment();
 
@@ -1014,21 +1022,17 @@ public class AutomataService {
 		// cstList.get(1) = not p
 
 		// transitions
-		TTesterTransition t0 = new TTesterTransition(s0, s1, assgn1, cstList.get(1), outVarsNeg); // !p!U
-		TTesterTransition t1 = new TTesterTransition(s0, s2, assgn1, cstList.get(0), outVarsNeg); // p!U
+		TTesterTransition t0 = new TTesterTransition(s0, s0, assgn1, cstList.get(1), outVarsNeg); // !p!U
+		TTesterTransition t1 = new TTesterTransition(s0, s1, assgn1, cstList.get(0), outVars); // pU
 
-		TTesterTransition t2 = new TTesterTransition(s1, s1, assgn1, cstList.get(1), outVarsNeg); // !p!U
-		TTesterTransition t3 = new TTesterTransition(s2, s2, assgn1, cstList.get(0), outVars); // pU
+		TTesterTransition t2 = new TTesterTransition(s1, s0, assgn1, cstList.get(1), outVarsNeg); // !p!U
+		TTesterTransition t3 = new TTesterTransition(s1, s1, assgn1, cstList.get(0), outVars); // pU
 
-		TTesterTransition t4 = new TTesterTransition(s1, s1, assgn1, cstList.get(1), outVars); // !pU
-		TTesterTransition t5 = new TTesterTransition(s2, s1, assgn1, cstList.get(0), outVarsNeg); // p!U
 
 		tt.addTransition(t0);
 		tt.addTransition(t1);
 		tt.addTransition(t2);
 		tt.addTransition(t3);
-		tt.addTransition(t4);
-		tt.addTransition(t5);
 
 		return tt;
 	}
@@ -1487,8 +1491,8 @@ public class AutomataService {
 				.println("composing tt1 {inVars, outVar}: {" + tt1.variables.values() + "," + tt1.getSingleOutputVar() + "}");
 		System.out
 				.println("     with tt2 {inVars, outVar}: {" + tt2.variables.values() + "," + tt2.getSingleOutputVar() + "}");
-		// System.out.println("TT1 " + tt1);
-		// System.out.println("TT2 " + tt2);
+		System.out.println("TT1 " + tt1);
+		System.out.println("TT2 " + tt2);
 
 		TTester composition = new TTester(false);
 		TransitionAssignment assgn = new TransitionAssignment();
@@ -1638,7 +1642,7 @@ public class AutomataService {
 			}
 		}
 
-		// System.out.println("COMPOSITION " + composition.toString());
+		 System.out.println("COMPOSITION " + composition.toString());
   	return composition;
 	} // end SyncAndCompose
 
@@ -1812,6 +1816,8 @@ public class AutomataService {
 	 * @return
 	 */
 	public static TTester getAlwaysTrueTester(Variable outVar) {
+		
+		//lets try classical
 		resetIDs();
 		TTester tt = new TTester(false);// no error state here. TODO-review the
 																		// decision
@@ -1849,6 +1855,41 @@ public class AutomataService {
 		tt.addTransition(t2);
     System.out.println("\nALWAYS TRUE TESTER "+tt.toString());
 		return tt;
+		//
+		
+		/*lets try something else
+		resetIDs();
+		TTester tt = new TTester(false);// no error state here. TODO-review the
+																		// decision
+		tt.addVar(outVar);
+		tt.addOutVar(outVar);
+
+		AutomatonState s0 = new AutomatonState(true, true);
+ 
+		tt.addState(s0);
+ 
+		TransitionAssignment assgn1 = new TransitionAssignment();
+
+		ArrayList<String> strList = new ArrayList<String>(2);
+		strList.add(0, "not(" + outVar.getName() + ")");
+		strList.add(1, "   (" + outVar.getName() + ")");
+		ArrayList<Constraint> cstList = prepareCstList(strList);
+
+		ArrayList<VariableInstance> outVars = new ArrayList<VariableInstance>();
+		outVars.add(new VariableInstance(outVar, true));
+
+		ArrayList<VariableInstance> outVarsNeg = new ArrayList<VariableInstance>();
+		outVarsNeg.add(new VariableInstance(outVar, false));
+
+		// cstList.get(0) = not p
+		// cstList.get(1) = p
+		TTesterTransition t0 = new TTesterTransition(s0, s0, assgn1, cstList.get(1), outVars);
+
+		tt.addTransition(t0);
+    System.out.println("\nALWAYS TRUE TESTER "+tt.toString());
+		return tt;
+		*/
+		
 	}
 
 	/**

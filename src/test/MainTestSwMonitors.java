@@ -55,7 +55,7 @@ public class MainTestSwMonitors extends BaseTest {
 
 		TTester composition = composeTT(aListener);
 		printCompositionInfo(composition);
-		updateCfgWithVars(composition.getVariables());
+		updateCfgWithVars(composition.getVariables()); 
 
 		// ------------------- RUN THE ALGORITHM ------------------------//
 		System.out.println("\n----------------- OBTAINING THE DISTANCE --------------\n");
