@@ -57,7 +57,7 @@ public class AutomataGenListener extends StlParserBaseListener {
 	 */
 	public AutomataGenListener() {
 		automataMap = new HashMap<String, TTester>();
-		prc2signalMap = new HashMap<String, Variable>();
+		prc2signalMap = new HashMap<String, Variable>(); 
 		numericalMap = new HashMap<String, String>();
 		acceptorTransitionMap = new HashMap<String, ArrayList<AutomatonTransition>>();
 		variableMap = new HashMap<String, Variable>();
